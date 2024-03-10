@@ -1,12 +1,10 @@
 import torch
 
 import json
+import numpy as np
 from pathlib import Path
-import matplotlib.pyplot as plt
-import matplotlib.patches as patches
-import torch.nn.functional as F
-from PIL import Image
-import io
+from PIL import Image, ImageDraw
+from torchvision import transforms
 
 
 def load_weights(pth_path, device, model, opt=None, lr_scheduler=None):
@@ -46,32 +44,21 @@ def load_label(path="./helpers/class_name_inference.json"):
     return class_names
 
 def show_one_image_label_score(image, boxes, labels, scores):
-    fig, ax = plt.subplots(1)
-    
-    # Convert the image tensor to numpy array and display
-    ax.imshow(image)
+    # Convert PyTorch tensor to a PIL Image object
+    img_pil = transforms.ToPILImage()(image)
+
+    draw = ImageDraw.Draw(img_pil)
 
     for box, label, score in zip(boxes, labels, scores):
-        box = box.cpu().detach().numpy()
         x1, y1, x2, y2 = box
         # Calculate width and height of the bounding box
         width = x2 - x1
         height = y2 - y1
-        # Create a Rectangle patch
-        rect = patches.Rectangle((x1, y1), width, height, linewidth=1, edgecolor='r', facecolor='none')
-        # Add the patch to the Axes
-        ax.add_patch(rect)
-        # Add label and score
-        ax.text(x1, y1, f'Class {label} - Score: {score:.2f}', color='r', fontsize=10, backgroundcolor='w')
+        # Draw rectangle
+        draw.rectangle([x1, y1, x2, y2], outline='red', width=2)
 
-    # Instead of showing, save the modified image to a BytesIO object
-    img_byte_arr = io.BytesIO()
-    plt.savefig(img_byte_arr, format='png')
-    plt.close(fig)
-    img_byte_arr.seek(0)
-    
-    # Convert the BytesIO object to a PIL image
-    modified_image = Image.open(img_byte_arr)
-    
-    return modified_image
+        # Add label and score
+        # draw.text((x1, y1), f'Class {label} - Score: {score:.2f}', fill='red')
+
+    return img_pil
 

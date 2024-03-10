@@ -1,0 +1,5 @@
+{
+    "title": "[DEMO] Fine-tuning Faster R-CNN for Car Classification",
+    "description": "Explore the power of Faster R-CNN with a custom ResNet 101 backbone, fine-tuned on the Stanford Cars dataset for precise car classification.",
+    "article": "In this demonstration, we present a powerful tool for car classification leveraging deep learning techniques. Our Gradio app showcases the fine-tuning of Faster R-CNN, a state-of-the-art object detection model, utilizing a custom ResNet 101 backbone. The model has been meticulously trained on the Stanford Cars dataset, ensuring accurate and reliable classification of various car types. With our user-friendly interface, you can easily upload images of cars and witness real-time predictions, gaining insights into the model's performance and capabilities. Whether you're an enthusiast exploring the intricacies of deep learning or a developer seeking cutting-edge solutions for object classification tasks, this demo provides an intuitive platform to experience the fusion of advanced algorithms and practical applications."
+}

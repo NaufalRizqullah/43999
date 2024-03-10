@@ -3,6 +3,7 @@ import torch
 import os
 from torchvision import transforms
 from timeit import default_timer as timer
+import json
 
 from helpers.model import fasterrcnn_backbone_resnet101
 from helpers.func import load_weights, load_label, show_one_image_label_score
@@ -41,12 +42,13 @@ def inference(img):
     start_time = timer()
 
     # transforms the target image and add a batch dimension
-    img_transormed = t(img).unsqueeze(0)
+    img_transormed = t(img)
+    img_squezzed = img_transormed.unsqueeze(0)
 
     # Inference the image
     model.eval()
     with torch.inference_mode():
-        predictions = model(img_transormed)
+        predictions = model(img_squezzed)
 
     # Extract predictions
     prediction = predictions[0]
@@ -63,7 +65,7 @@ def inference(img):
     best_class_indices = [name_label]
     best_scores = [best_score]
 
-    result_image = show_one_image_label_score(img, boxes, best_class_indices, best_scores)
+    result_image = show_one_image_label_score(img_transormed, boxes, best_class_indices, best_scores)
 
 
     # Calculate the prediction time
@@ -79,10 +81,13 @@ def inference(img):
 
 # Make Gradio App.
 
-# Create title, description and Article.
-title = "[DEMO] ---"
-description = "Demo of ---"
-article = "---"
+# Load title, description, and article from the JSON file
+with open("demo_info.json", "r") as f:
+    loaded_demo_info = json.load(f)
+
+title = loaded_demo_info["title"]
+description = loaded_demo_info["description"]
+article = loaded_demo_info["article"]
 
 # Create examples list from "examples/" directory
 path_example = "./examples/"
@@ -94,8 +99,8 @@ demo = gr.Interface(
     fn=inference,
     inputs=gr.Image(type="pil"),
     outputs=[
-        gr.Image(),
-        gr.Label(num_top_classes=5, label="Class Predictions"),
+        gr.Image(label="Object (Cars) Detection"),
+        gr.Label(label="Class Predictions"),
         gr.Number(label="Prediction time (s)"),
     ],
     examples=example_list,
