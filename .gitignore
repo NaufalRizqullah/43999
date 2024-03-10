@@ -28,6 +28,3 @@ archive.zip
 
 # macOS
 .DS_Store
-
-# Ignored for handle cant push cause limit LFS
-models/*
